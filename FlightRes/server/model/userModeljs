@@ -1,0 +1,45 @@
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+
+const UserSchema = mongoose.Schema({
+    userId: {
+        type: String,
+        required: true,
+        unique: true,
+        maxlength: 16
+    },
+    userPassword: {
+        type: String,
+        required: true,
+        minlength: 8
+    },
+    userName: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    address: {
+        type: String,
+    },
+    userEmail: {
+        type: String,
+        required: true,
+        unique: true
+    }
+});
+
+UserSchema.methods.generateHash = function(pw) {
+    let mongobcrypt = bcrypt;
+    let salt = mongobcrypt.genSaltSync(8);
+
+    return bcrypt.hashSync(pw, salt, null);
+};
+
+UserSchema.methods.validPassword = function(pw) {
+    let mongobcrypt = bcrypt;
+    return mongobcrypt.compareSync(pw, this.UserPw);
+}
+
+const User = mongoose.model('User', UserSchema);
+
+module.exports = User;
